@@ -198,7 +198,7 @@ export default function Home() {
           ) : (
             <div className="flex items-center justify-end w-full">
               <p className="p-3 text-sm text-gray-600 dark:text-gray-400">
-                Sign in to edit your links
+                Sign in to create and edit your links
               </p>
               <button
                 onClick={() => signIn('google')}
