@@ -64,7 +64,7 @@ export default function Home() {
         } else {
           setConfigError('')
         }
-      } catch (error) {
+      } catch {
         setConfigError('Environment variables not configured. Please set up MONGODB_URI, GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET in your .env file.')
       }
     }
