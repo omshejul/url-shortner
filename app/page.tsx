@@ -263,7 +263,7 @@ export default function Home() {
           <div>
             {status === 'loading' ? (
               <div className="flex py-2 justify-center">
-                <FiLoader className="w-5 h-5 animate-spin text-gray-500 dark:text-gray-400" />
+                <FiLoader className="w-10 h-10 animate-spin text-gray-500 dark:text-gray-400" />
               </div>
             ) : session ? (
               <div className="flex flex-wrap py-2 items-center gap-2">
@@ -274,8 +274,8 @@ export default function Home() {
                     <Image
                       src={session.user.image}
                       alt={session.user.name || 'Profile'}
-                      width={42}
-                      height={42}
+                      width={40}
+                      height={40}
                       className="rounded-full"
                       referrerPolicy="no-referrer"
                     />
