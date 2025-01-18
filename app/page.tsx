@@ -35,6 +35,18 @@ export default function Home() {
   const [isUpdating, setIsUpdating] = useState<{[key: string]: boolean}>({})
   const [editedValues, setEditedValues] = useState<{[key: string]: LinkData}>({})
 
+  // Load form data from localStorage on mount
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('urlShortenerFormData')
+    if (savedFormData) {
+      const { url: savedUrl, customPath: savedPath, expiry: savedExpiry } = JSON.parse(savedFormData)
+      setUrl(savedUrl || '')
+      setCustomPath(savedPath || '')
+      setExpiry(savedExpiry || '')
+      localStorage.removeItem('urlShortenerFormData')
+    }
+  }, [])
+
   useEffect(() => {
     if (session) {
       fetchLinks()
@@ -201,7 +213,11 @@ export default function Home() {
                 Sign in to create and edit your links
               </p>
               <button
-                onClick={() => signIn('google')}
+                onClick={() => {
+                  // Save form data before signing in
+                  localStorage.setItem('urlShortenerFormData', JSON.stringify({ url, customPath, expiry }))
+                  signIn('google')
+                }}
                 className="flex items-center gap-2 px-6 py-3 bg-gray-400/10 dark:bg-gray-400/10 border border-gray-400/20 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
