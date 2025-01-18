@@ -20,7 +20,7 @@ export async function GET() {
     const session = await getServerSession()
     
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized, Sign In to Continue' }, { status: 401 })
     }
 
     console.log('Fetching links for user:', session.user.email)

@@ -22,7 +22,7 @@ export async function DELETE(
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized, Sign In to Continue' }, { status: 401 })
     }
 
     const resolvedParams = await context.params
@@ -52,7 +52,7 @@ export async function PATCH(
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized, Sign In to Continue' }, { status: 401 })
     }
 
     const resolvedParams = await context.params

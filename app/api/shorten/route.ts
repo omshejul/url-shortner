@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const session = await getServerSession()
     
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized, Sign In to Continue' }, { status: 401 })
     }
 
     const { url, customPath, expiry } = await req.json()
