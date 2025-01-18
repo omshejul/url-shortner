@@ -34,6 +34,7 @@ export default function Home() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isUpdating, setIsUpdating] = useState<{[key: string]: boolean}>({})
   const [editedValues, setEditedValues] = useState<{[key: string]: LinkData}>({})
+  const [configError, setConfigError] = useState('')
 
   // Load form data from localStorage on mount
   useEffect(() => {
@@ -52,6 +53,23 @@ export default function Home() {
       fetchLinks()
     }
   }, [session])
+
+  // Check for configuration errors
+  useEffect(() => {
+    const checkConfig = async () => {
+      try {
+        const res = await fetch('/api/auth/providers')
+        if (!res.ok) {
+          setConfigError('Environment variables not configured. Please set up MONGODB_URI, GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET in your .env file.')
+        } else {
+          setConfigError('')
+        }
+      } catch (error) {
+        setConfigError('Environment variables not configured. Please set up MONGODB_URI, GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET in your .env file.')
+      }
+    }
+    checkConfig()
+  }, [])
 
   const fetchLinks = async () => {
     try {
@@ -190,6 +208,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-black">
       <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        {configError && (
+          <div className="mb-8 p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <p className="text-yellow-700 dark:text-yellow-300">{configError}</p>
+          </div>
+        )}
+        
         <div className="flex justify-end mb-8">
           {status === 'loading' ? (
             <div className="flex justify-center">
