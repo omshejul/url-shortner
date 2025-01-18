@@ -1,8 +1,10 @@
-'use client';
+'use client'
 import { signIn, signOut, useSession } from 'next-auth/react'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { Copy, LogOut, Trash2 } from 'react-feather'
-import { FiCheck, FiEdit2, FiLoader, FiX } from "react-icons/fi"
+import { FiCheck, FiEdit2, FiLoader, FiUser, FiX } from "react-icons/fi"
+import { format } from 'timeago.js'
 
 // First, add a new type for link data
 type LinkData = {
@@ -20,6 +22,32 @@ interface Link {
   userId: string
 }
 
+// Format date helper function
+const formatDate = (date: string | null) => {
+  if (!date) return null
+  return new Date(date).toLocaleDateString('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  })
+}
+
+// Format relative time helper function
+const formatRelativeTime = (date: string | null) => {
+  if (!date) return null
+  const target = new Date(date)
+  const now = new Date()
+  
+  // If expired
+  if (target < now) return 'Expired'
+  
+  return format(target, 'en_US')
+}
+
 export default function Home() {
   const { data: session, status } = useSession()
   const [url, setUrl] = useState('')
@@ -32,9 +60,17 @@ export default function Home() {
   const [isLoadingLinks, setIsLoadingLinks] = useState(false)
   const [linksError, setLinksError] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [isUpdating, setIsUpdating] = useState<{[key: string]: boolean}>({})
-  const [editedValues, setEditedValues] = useState<{[key: string]: LinkData}>({})
+  const [isUpdating, setIsUpdating] = useState<{ [key: string]: boolean }>({})
+  const [editedValues, setEditedValues] = useState<{ [key: string]: LinkData }>({})
   const [configError, setConfigError] = useState('')
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  // Handle copy feedback
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000) // Reset after 2 seconds
+  }
 
   // Load form data from localStorage on mount
   useEffect(() => {
@@ -77,11 +113,11 @@ export default function Home() {
       setLinksError('')
       const res = await fetch('/api/links')
       const data = await res.json()
-      
+
       if (!res.ok) {
         throw new Error(data.error || 'Failed to fetch links')
       }
-      
+
       setLinks(data.links)
     } catch (error) {
       console.error('Error fetching links:', error)
@@ -143,10 +179,10 @@ export default function Home() {
   // }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    setShortUrl('');
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
+    setShortUrl('')
 
     try {
       const response = await fetch('/api/shorten', {
@@ -154,27 +190,27 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           url,
           customPath: customPath.trim() || undefined,
           expiry: expiry ? parseInt(expiry) : undefined
         }),
-      });
+      })
 
-      const data = await response.json();
-      
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
+        throw new Error(data.error || 'Something went wrong')
       }
 
-      setShortUrl(data.shortUrl);
-      await fetchLinks();
+      setShortUrl(data.shortUrl)
+      await fetchLinks()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleSaveChanges = async (shortId: string) => {
     try {
@@ -213,9 +249,9 @@ export default function Home() {
             <p className="text-yellow-700 dark:text-yellow-300">{configError}</p>
           </div>
         )}
-        
-        <div className="flex p-2 px-10 items-center justify-between mb-12">
-          <div>
+
+        <div className="flex flex-wrap px-4 items-center justify-between mb-12">
+          <div className="py-2">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
               URL Shortener
             </h1>
@@ -226,14 +262,39 @@ export default function Home() {
 
           <div>
             {status === 'loading' ? (
-              <div className="flex justify-center">
+              <div className="flex py-2 justify-center">
                 <FiLoader className="w-5 h-5 animate-spin text-gray-500 dark:text-gray-400" />
               </div>
             ) : session ? (
-              <div className="flex items-center gap-4">
-                <span className="text-gray-700 dark:text-gray-300">
-                  {session.user?.email}
-                </span>
+              <div className="flex flex-wrap py-2 items-center gap-2">
+                <div className="flex flex-wrap p-2 items-center gap-2 rounded-lg ">
+
+                <div className="flex items-center gap-3">
+                  {session.user?.image? (
+                    <Image
+                      src={session.user.image}
+                      alt={session.user.name || 'Profile'}
+                      width={42}
+                      height={42}
+                      className="rounded-full"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                      <FiUser className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {session.user?.name}
+                  </span>
+                  <span className="text-gray-500 dark:text-gray-500">
+                    {session.user?.email}
+                  </span>
+                </div>
+                </div>
+
                 <button
                   onClick={() => signOut()}
                   className="flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-400/10 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg border border-gray-400/20"
@@ -342,7 +403,7 @@ export default function Home() {
                 </select>
               </div>
             </div>
-            
+
             <button
               type="submit"
               disabled={isLoading}
@@ -374,18 +435,22 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <a
                   href={shortUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="font-mono text-blue-600 dark:text-blue-400 hover:underline break-all"
                 >
                   {shortUrl}
                 </a>
                 <button
-                  onClick={() => navigator.clipboard.writeText(shortUrl)}
-                  className="p-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-400/10 border border-gray-400/20 rounded-lg"
-                  title="Copy to clipboard"
+                  onClick={() => handleCopy(shortUrl, 'new')}
+                  className="p-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-400/10 border border-gray-400/20 rounded-lg transition-colors"
+                  title={copiedId === 'new' ? 'Copied!' : 'Copy to clipboard'}
                 >
-                  <Copy className="w-4 h-4" />
+                  {copiedId === 'new' ? (
+                    <FiCheck className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -492,8 +557,8 @@ export default function Home() {
                           ) : (
                             <a
                               href={link.originalUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="block text-blue-600 dark:text-blue-400 hover:underline break-all"
                             >
                               {link.originalUrl}
@@ -504,26 +569,40 @@ export default function Home() {
                         <div className="space-y-2 min-w-0">
                           <label className="text-sm text-gray-500 dark:text-gray-400">Short URL</label>
                           <div className="flex items-center gap-2 overflow-hidden">
-                            <span className="text-gray-500 dark:text-gray-400 shrink-0">{process.env.NEXT_PUBLIC_BASE_URL}/</span>
                             {editingId === link.shortId ? (
-                              <input
-                                type="text"
-                                value={editedValues[link.shortId]?.shortId ?? link.shortId}
-                                onChange={(e) => setEditedValues(prev => ({
-                                  ...prev,
-                                  [link.shortId]: { ...prev[link.shortId], shortId: e.target.value }
-                                }))}
-                                pattern="^[a-zA-Z0-9-_]*$"
-                                className="min-w-0 flex-1 p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
-                              />
+                              <div className="flex items-center gap-2 w-full">
+                                <span className="text-gray-500 dark:text-gray-400 shrink-0">{process.env.NEXT_PUBLIC_BASE_URL}/</span>
+                                <input
+                                  type="text"
+                                  value={editedValues[link.shortId]?.shortId ?? link.shortId}
+                                  onChange={(e) => setEditedValues(prev => ({
+                                    ...prev,
+                                    [link.shortId]: { ...prev[link.shortId], shortId: e.target.value }
+                                  }))}
+                                  pattern="^[a-zA-Z0-9-_]*$"
+                                  className="min-w-0 flex-1 p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
+                                />
+                              </div>
                             ) : (
                               <div className="flex items-center gap-2 min-w-0 overflow-hidden">
-                                <span className="text-blue-600 dark:text-blue-400 truncate">{link.shortId}</span>
-                                <button
-                                  onClick={() => navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`)}
-                                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 bg-gray-400/10 shrink-0 border border-gray-400/20 rounded-lg"
+                                <a
+                                  href={`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer" 
+                                  className="text-blue-600 dark:text-blue-400 hover:underline truncate"
                                 >
-                                  <Copy className="w-4 h-4" />
+                                  {process.env.NEXT_PUBLIC_BASE_URL}/{link.shortId}
+                                </a>
+                                <button
+                                  onClick={() => handleCopy(`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`, link.shortId)}
+                                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 bg-gray-400/10 shrink-0 border border-gray-400/20 rounded-lg transition-colors"
+                                  title={copiedId === link.shortId ? 'Copied!' : 'Copy to clipboard'}
+                                >
+                                  {copiedId === link.shortId ? (
+                                    <FiCheck className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
                                 </button>
                               </div>
                             )}
@@ -549,7 +628,10 @@ export default function Home() {
                             </select>
                           ) : link.expiresAt ? (
                             <p className="text-gray-900 dark:text-white">
-                              Expires: {new Date(link.expiresAt).toLocaleString()}
+                              Expires {formatRelativeTime(link.expiresAt)}
+                              <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                                ({formatDate(link.expiresAt)})
+                              </span>
                             </p>
                           ) : (
                             <p className="text-gray-500 dark:text-gray-400">No expiration</p>
@@ -565,5 +647,5 @@ export default function Home() {
         )}
       </div>
     </div>
-  );
+  )
 }
