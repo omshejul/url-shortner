@@ -252,12 +252,12 @@ export default function Home() {
       
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         {configError && (
-          <div className="mb-8 p-4 bg-yellow-50/10 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-xl backdrop-blur-xl">
+          <div className="mb-8 p-4 bg-yellow-50/10 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-xl backdrop-blur-xl animate-fade-in">
             <p className="text-yellow-700 dark:text-yellow-300">{configError}</p>
           </div>
         )}
 
-        <div className="flex flex-wrap px-4 items-center justify-between mb-12">
+        <div className="flex flex-wrap px-4 items-center justify-between mb-12 animate-fade-in">
           <div className="py-2">
             <h1 className="text-4xl font-bold text-neutral-900 dark:text-white mb-2">
               URL Shortener
@@ -269,11 +269,11 @@ export default function Home() {
 
           <div>
             {status === 'loading' ? (
-              <div className="flex py-2 justify-center">
+              <div className="flex py-2 justify-center loader-fade-out">
                 <FiLoader className="w-10 h-10 animate-spin text-neutral-500 dark:text-neutral-400" />
               </div>
             ) : session ? (
-              <div className="flex flex-wrap py-2 items-center gap-2">
+              <div className="flex flex-wrap py-2 items-center gap-2 content-fade-in">
                 <div className="flex flex-wrap p-2 items-center gap-2 rounded-xl ">
 
                 <div className="flex items-center gap-3">
@@ -344,7 +344,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-neutral-400/20 rounded-xl p-6 sm:p-8 backdrop-blur-xl">
+        <div className="z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-neutral-400/20 rounded-xl p-6 sm:p-8 backdrop-blur-xl animate-slide-up">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6">
               <div>
@@ -420,24 +420,24 @@ export default function Home() {
                 disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
               {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
+                <span className="flex items-center justify-center gap-2 animate-fade-in">
                   <FiLoader className="w-5 h-5 animate-spin" />
                   Shortening...
                 </span>
               ) : (
-                'Shorten URL'
+                <span className="animate-fade-in">Shorten URL</span>
               )}
             </button>
           </form>
 
           {error && (
-            <div className="mt-6 p-4 z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-red-200/50 dark:border-red-800/50 rounded-xl backdrop-blur-xl">
+            <div className="mt-6 p-4 z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-red-200/50 dark:border-red-800/50 rounded-xl backdrop-blur-xl animate-fade-in">
               <p className="text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
 
           {shortUrl && (
-            <div className="mt-6 p-4 bg-green-50/10 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl backdrop-blur-xl">
+            <div className="mt-6 p-4 bg-green-50/10 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl backdrop-blur-xl animate-scale-in">
               <p className="text-green-700 dark:text-green-300 mb-2">Your shortened URL:</p>
               <div className="flex items-center gap-2">
                 <a
@@ -465,191 +465,193 @@ export default function Home() {
         </div>
 
         {session && (
-          <div className="mt-12">
+          <div className="mt-12 animate-slide-up">
             <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-6">Your Links</h2>
-            {isLoadingLinks ? (
-              <div className="flex justify-center">
-                <FiLoader className="w-6 h-6 animate-spin text-neutral-500 dark:text-neutral-400" />
-              </div>
-            ) : linksError ? (
-              <div className="text-center text-red-500">{linksError}</div>
-            ) : links.length === 0 ? (
-              <div className="text-center text-neutral-500 dark:text-neutral-400">No links created yet</div>
-            ) : (
-              <div className="space-y-4">
-                {links.map((link) => (
-                  <div
-                    key={link.shortId}
-                    className=" z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-neutral-400/20 rounded-xl p-4 backdrop-blur-xl"
-                  >
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-neutral-900 dark:text-white">Link Details</h3>
-                        <div className="flex items-center gap-2">
-                          {editingId === link.shortId ? (
-                            <>
-                              <button
-                                onClick={() => {
-                                  setEditingId(null)
-                                  setEditedValues(prev => {
-                                    const next = { ...prev }
-                                    delete next[link.shortId]
-                                    return next
-                                  })
-                                }}
-                                className="p-3 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
-                                disabled={isUpdating[link.shortId]}
-                              >
-                                <FiX className="w-5 h-5" />
-                              </button>
-                              <button
-                                onClick={() => handleSaveChanges(link.shortId)}
-                                className="p-3 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
-                                disabled={isUpdating[link.shortId]}
-                              >
-                                {isUpdating[link.shortId] ? (
-                                  <FiLoader className="w-5 h-5 animate-spin" />
-                                ) : (
-                                  <FiCheck className="w-5 h-5" />
-                                )}
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => {
-                                  setEditingId(link.shortId)
-                                  setEditedValues(prev => ({
-                                    ...prev,
-                                    [link.shortId]: {
-                                      shortId: link.shortId,
-                                      originalUrl: link.originalUrl,
-                                      expiresAt: link.expiresAt ? String(Math.floor((new Date(link.expiresAt).getTime() - Date.now()) / 1000)) : ''
-                                    }
-                                  }))
-                                }}
-                                className="p-3 text-neutral-700 hover:text-neutral-200 dark:text-neutral-300 dark:hover:text-neutral-200 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
-                              >
-                                <FiEdit2 className="w-5 h-5" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(link.shortId)}
-                                className="p-3 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
-                                disabled={isUpdating[link.shortId]}
-                              >
-                                {isUpdating[link.shortId] ? (
-                                  <FiLoader className="w-5 h-5 animate-spin" />
-                                ) : (
-                                  <Trash2 className="w-5 h-5" />
-                                )}
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2 min-w-0">
-                          <label className="text-sm text-neutral-500 dark:text-neutral-400">Original URL</label>
-                          {editingId === link.shortId ? (
-                            <input
-                              type="url"
-                              value={editedValues[link.shortId]?.originalUrl ?? link.originalUrl}
-                              onChange={(e) => setEditedValues(prev => ({
-                                ...prev,
-                                [link.shortId]: { ...prev[link.shortId], originalUrl: e.target.value }
-                              }))}
-                              className="w-full p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
-                            />
-                          ) : (
-                            <a
-                              href={link.originalUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-blue-600 dark:text-blue-400 hover:underline break-all"
-                            >
-                              {link.originalUrl}
-                            </a>
-                          )}
-                        </div>
-
-                        <div className="space-y-2 min-w-0">
-                          <label className="text-sm text-neutral-500 dark:text-neutral-400">Short URL</label>
-                          <div className="flex items-center gap-2 overflow-hidden">
+            <div className="loader-container">
+              {isLoadingLinks ? (
+                <div className="flex justify-center loader-fade-out">
+                  <FiLoader className="w-6 h-6 animate-spin text-neutral-500 dark:text-neutral-400" />
+                </div>
+              ) : linksError ? (
+                <div className="text-center text-red-500 content-fade-in">{linksError}</div>
+              ) : links.length === 0 ? (
+                <div className="text-center text-neutral-500 dark:text-neutral-400 content-fade-in">No links created yet</div>
+              ) : (
+                <div className="space-y-4 stagger-animation content-fade-in">
+                  {links.map((link) => (
+                    <div
+                      key={link.shortId}
+                      className="z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-neutral-400/20 rounded-xl p-4 backdrop-blur-xl animate-fade-in"
+                    >
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-medium text-neutral-900 dark:text-white">Link Details</h3>
+                          <div className="flex items-center gap-2">
                             {editingId === link.shortId ? (
-                              <div className="flex items-center gap-2 w-full">
-                                <span className="text-neutral-500 dark:text-neutral-400 shrink-0">{process.env.NEXT_PUBLIC_BASE_URL}/</span>
-                                <input
-                                  type="text"
-                                  value={editedValues[link.shortId]?.shortId ?? link.shortId}
-                                  onChange={(e) => setEditedValues(prev => ({
-                                    ...prev,
-                                    [link.shortId]: { ...prev[link.shortId], shortId: e.target.value }
-                                  }))}
-                                  pattern="^[a-zA-Z0-9-_]*$"
-                                  className="min-w-0 flex-1 p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
-                                />
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-2 min-w-0 overflow-hidden">
-                                <a
-                                  href={`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer" 
-                                  className="text-blue-600 dark:text-blue-400 hover:underline truncate"
-                                >
-                                  {process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https:\/\//, '')}/{link.shortId}
-                                </a>
+                              <>
                                 <button
-                                  onClick={() => handleCopy(`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`, link.shortId)}
-                                  className="p-2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 bg-neutral-400/10 shrink-0 border border-neutral-400/20 rounded-xl transition-colors"
-                                  title={copiedId === link.shortId ? 'Copied!' : 'Copy to clipboard'}
+                                  onClick={() => {
+                                    setEditingId(null)
+                                    setEditedValues(prev => {
+                                      const next = { ...prev }
+                                      delete next[link.shortId]
+                                      return next
+                                    })
+                                  }}
+                                  className="p-3 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
+                                  disabled={isUpdating[link.shortId]}
                                 >
-                                  {copiedId === link.shortId ? (
-                                    <FiCheck className="w-4 h-4 text-green-500" />
+                                  <FiX className="w-5 h-5" />
+                                </button>
+                                <button
+                                  onClick={() => handleSaveChanges(link.shortId)}
+                                  className="p-3 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
+                                  disabled={isUpdating[link.shortId]}
+                                >
+                                  {isUpdating[link.shortId] ? (
+                                    <FiLoader className="w-5 h-5 animate-spin" />
                                   ) : (
-                                    <Copy className="w-4 h-4" />
+                                    <FiCheck className="w-5 h-5" />
                                   )}
                                 </button>
-                              </div>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    setEditingId(link.shortId)
+                                    setEditedValues(prev => ({
+                                      ...prev,
+                                      [link.shortId]: {
+                                        shortId: link.shortId,
+                                        originalUrl: link.originalUrl,
+                                        expiresAt: link.expiresAt ? String(Math.floor((new Date(link.expiresAt).getTime() - Date.now()) / 1000)) : ''
+                                      }
+                                    }))
+                                  }}
+                                  className="p-3 text-neutral-700 hover:text-neutral-200 dark:text-neutral-300 dark:hover:text-neutral-200 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
+                                >
+                                  <FiEdit2 className="w-5 h-5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(link.shortId)}
+                                  className="p-3 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
+                                  disabled={isUpdating[link.shortId]}
+                                >
+                                  {isUpdating[link.shortId] ? (
+                                    <FiLoader className="w-5 h-5 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="w-5 h-5" />
+                                  )}
+                                </button>
+                              </>
                             )}
                           </div>
                         </div>
 
-                        <div className="space-y-2 md:col-span-2">
-                          <label className="text-sm text-neutral-500 dark:text-neutral-400">Expiration</label>
-                          {editingId === link.shortId ? (
-                            <select
-                              value={editedValues[link.shortId]?.expiresAt ?? ''}
-                              onChange={(e) => setEditedValues(prev => ({
-                                ...prev,
-                                [link.shortId]: { ...prev[link.shortId], expiresAt: e.target.value }
-                              }))}
-                              className="w-full p-2 text-neutral-900 dark:text-white bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
-                            >
-                              <option value="">No expiration</option>
-                              <option value="3600">1 hour</option>
-                              <option value="86400">1 day</option>
-                              <option value="604800">1 week</option>
-                              <option value="2592000">1 month</option>
-                            </select>
-                          ) : link.expiresAt ? (
-                            <p className="text-neutral-900 dark:text-white">
-                              Expires {formatRelativeTime(link.expiresAt)}
-                              <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-2">
-                                ({formatDate(link.expiresAt)})
-                              </span>
-                            </p>
-                          ) : (
-                            <p className="text-neutral-500 dark:text-neutral-400">No expiration</p>
-                          )}
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2 min-w-0">
+                            <label className="text-sm text-neutral-500 dark:text-neutral-400">Original URL</label>
+                            {editingId === link.shortId ? (
+                              <input
+                                type="url"
+                                value={editedValues[link.shortId]?.originalUrl ?? link.originalUrl}
+                                onChange={(e) => setEditedValues(prev => ({
+                                  ...prev,
+                                  [link.shortId]: { ...prev[link.shortId], originalUrl: e.target.value }
+                                }))}
+                                className="w-full p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
+                              />
+                            ) : (
+                              <a
+                                href={link.originalUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block text-blue-600 dark:text-blue-400 hover:underline break-all"
+                              >
+                                {link.originalUrl}
+                              </a>
+                            )}
+                          </div>
+
+                          <div className="space-y-2 min-w-0">
+                            <label className="text-sm text-neutral-500 dark:text-neutral-400">Short URL</label>
+                            <div className="flex items-center gap-2 overflow-hidden">
+                              {editingId === link.shortId ? (
+                                <div className="flex items-center gap-2 w-full">
+                                  <span className="text-neutral-500 dark:text-neutral-400 shrink-0">{process.env.NEXT_PUBLIC_BASE_URL}/</span>
+                                  <input
+                                    type="text"
+                                    value={editedValues[link.shortId]?.shortId ?? link.shortId}
+                                    onChange={(e) => setEditedValues(prev => ({
+                                      ...prev,
+                                      [link.shortId]: { ...prev[link.shortId], shortId: e.target.value }
+                                    }))}
+                                    pattern="^[a-zA-Z0-9-_]*$"
+                                    className="min-w-0 flex-1 p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-2 min-w-0 overflow-hidden">
+                                  <a
+                                    href={`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer" 
+                                    className="text-blue-600 dark:text-blue-400 hover:underline truncate"
+                                  >
+                                    {process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https:\/\//, '')}/{link.shortId}
+                                  </a>
+                                  <button
+                                    onClick={() => handleCopy(`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`, link.shortId)}
+                                    className="p-2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 bg-neutral-400/10 shrink-0 border border-neutral-400/20 rounded-xl transition-colors"
+                                    title={copiedId === link.shortId ? 'Copied!' : 'Copy to clipboard'}
+                                  >
+                                    {copiedId === link.shortId ? (
+                                      <FiCheck className="w-4 h-4 text-green-500" />
+                                    ) : (
+                                      <Copy className="w-4 h-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="space-y-2 md:col-span-2">
+                            <label className="text-sm text-neutral-500 dark:text-neutral-400">Expiration</label>
+                            {editingId === link.shortId ? (
+                              <select
+                                value={editedValues[link.shortId]?.expiresAt ?? ''}
+                                onChange={(e) => setEditedValues(prev => ({
+                                  ...prev,
+                                  [link.shortId]: { ...prev[link.shortId], expiresAt: e.target.value }
+                                }))}
+                                className="w-full p-2 text-neutral-900 dark:text-white bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
+                              >
+                                <option value="">No expiration</option>
+                                <option value="3600">1 hour</option>
+                                <option value="86400">1 day</option>
+                                <option value="604800">1 week</option>
+                                <option value="2592000">1 month</option>
+                              </select>
+                            ) : link.expiresAt ? (
+                              <p className="text-neutral-900 dark:text-white">
+                                Expires {formatRelativeTime(link.expiresAt)}
+                                <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-2">
+                                  ({formatDate(link.expiresAt)})
+                                </span>
+                              </p>
+                            ) : (
+                              <p className="text-neutral-500 dark:text-neutral-400">No expiration</p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
