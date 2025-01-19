@@ -3,7 +3,7 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { Copy, LogOut, Trash2 } from 'react-feather'
-import { FiCheck, FiEdit2, FiLoader, FiUser, FiX } from "react-icons/fi"
+import { FiCheck, FiEdit2, FiLoader, FiMail, FiUser, FiX } from "react-icons/fi"
 import { format } from 'timeago.js'
 
 // First, add a new type for link data
@@ -48,6 +48,12 @@ const formatRelativeTime = (date: string | null) => {
   return format(target, 'en_US')
 }
 
+// Add new type for popup state
+type PopupState = {
+  isOpen: boolean
+  isClosing: boolean
+}
+
 export default function Home() {
   const { data: session, status } = useSession()
   const [url, setUrl] = useState('')
@@ -64,6 +70,7 @@ export default function Home() {
   const [editedValues, setEditedValues] = useState<{ [key: string]: LinkData }>({})
   const [configError, setConfigError] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [popup, setPopup] = useState<PopupState>({ isOpen: false, isClosing: false })
 
   // Handle copy feedback
   const handleCopy = (text: string, id: string) => {
@@ -241,6 +248,20 @@ export default function Home() {
     }
   }
 
+  const closePopup = () => {
+    setPopup(prev => ({ ...prev, isClosing: true }))
+    setTimeout(() => {
+      setPopup({ isOpen: false, isClosing: false })
+    }, 300) // Match animation duration
+  }
+
+  const handleContact = () => {
+    closePopup()
+    setTimeout(() => {
+      window.open('mailto:urlshortener@omshejul.com?subject=URL Shortener Support')
+    }, 300)
+  }
+
   return (
     <div className="min-h-svh bg-white dark:bg-black relative">
       {/* Add gradient blobs */}
@@ -250,7 +271,7 @@ export default function Home() {
         style={{ animationDelay: '-10s' }}
       />
       
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
         {configError && (
           <div className="mb-8 p-4 bg-yellow-50/10 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-xl backdrop-blur-xl animate-fade-in">
             <p className="text-yellow-700 dark:text-yellow-300">{configError}</p>
@@ -655,6 +676,104 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="absolute bottom-0 left-0 right-0 z-20 animate-fade-in">
+        <div className="backdrop-blur-xl bg-neutral-100/20 dark:bg-neutral-700/20 border-t border-neutral-400/20">
+          <div className="max-w-4xl mx-auto px-6 py-3 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <a
+                  href="https://github.com/omshejul"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 bg-neutral-400/10 border border-neutral-400/20 rounded-xl transition-colors"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                  </svg>
+                </a>
+                <button
+                  className="p-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 bg-neutral-400/10 border border-neutral-400/20 rounded-xl transition-colors"
+                  title="About & Contact"
+                  onClick={() => setPopup({ isOpen: true, isClosing: false })}
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                  </svg>
+                </button>
+              </div>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                Built by Om Shejul
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {/* Custom Popup */}
+      {popup.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className={`fixed inset-0 bg-black/20 dark:bg-black/40 popup-backdrop ${popup.isClosing ? 'closing' : ''}`}
+            onClick={closePopup}
+          />
+          <div 
+            className={`relative bg-white dark:bg-neutral-900 rounded-2xl shadow-xl max-w-md w-full p-6 popup-content ${popup.isClosing ? 'closing' : ''}`}
+          >
+            <div className="absolute right-4 top-4">
+              <button
+                onClick={closePopup}
+                className="p-2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <h3 className="text-2xl font-semibold text-neutral-900 dark:text-white mb-4">
+              URL Shortener
+            </h3>
+            
+            <div className="space-y-4 text-neutral-600 dark:text-neutral-300">
+              <p className="leading-relaxed">
+                A simple, fast, and open-source URL shortening service built with modern technologies.
+              </p>
+              
+              <div className="space-y-2">
+                <p className="font-medium">Features:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Custom short URLs</li>
+                  <li>Link expiration</li>
+                  <li>Link management</li>
+                  <li>Dark mode support</li>
+                </ul>
+              </div>
+              
+              <p>
+                Built with Next.js and MongoDB
+              </p>
+            </div>
+            
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={closePopup}
+                className="px-4 py-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleContact}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors flex items-center gap-2"
+              >
+                <FiMail className="w-4 h-4" />
+                Contact Admin
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
