@@ -290,7 +290,7 @@ export default function Home() {
 
           <div>
             {status === 'loading' ? (
-              <div className="flex py-2 justify-center loader-fade-out">
+              <div className="flex py-4 justify-center loader-fade-out">
                 <FiLoader className="w-10 h-10 animate-spin text-neutral-500 dark:text-neutral-400" />
               </div>
             ) : session ? (
