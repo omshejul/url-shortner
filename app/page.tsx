@@ -242,20 +242,30 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
-      <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+    <div className="min-h-svh bg-white dark:bg-black relative">
+      {/* Add gradient blobs */}
+      <div className="gradient-blob top-[-20%] left-[-10%] opacity-50" />
+      <div 
+        className="gradient-blob bottom-[-20%] right-[-10%] opacity-50" 
+        style={{ animationDelay: '-10s' }}
+      />
+      
+      {/* Add grain effect */}
+      <div className="grain" />
+      
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         {configError && (
-          <div className="mb-8 p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <div className="mb-8 p-4 bg-yellow-50/10 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-xl backdrop-blur-xl">
             <p className="text-yellow-700 dark:text-yellow-300">{configError}</p>
           </div>
         )}
 
         <div className="flex flex-wrap px-4 items-center justify-between mb-12">
           <div className="py-2">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-4xl font-bold text-neutral-900 dark:text-white mb-2">
               URL Shortener
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-neutral-600 dark:text-neutral-300">
               Create short, memorable links in seconds
             </p>
           </div>
@@ -263,11 +273,11 @@ export default function Home() {
           <div>
             {status === 'loading' ? (
               <div className="flex py-2 justify-center">
-                <FiLoader className="w-10 h-10 animate-spin text-gray-500 dark:text-gray-400" />
+                <FiLoader className="w-10 h-10 animate-spin text-neutral-500 dark:text-neutral-400" />
               </div>
             ) : session ? (
               <div className="flex flex-wrap py-2 items-center gap-2">
-                <div className="flex flex-wrap p-2 items-center gap-2 rounded-lg ">
+                <div className="flex flex-wrap p-2 items-center gap-2 rounded-xl ">
 
                 <div className="flex items-center gap-3">
                   {session.user?.image? (
@@ -280,16 +290,16 @@ export default function Home() {
                       referrerPolicy="no-referrer"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                      <FiUser className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+                      <FiUser className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
                     </div>
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-gray-700 dark:text-gray-300">
+                  <span className="text-neutral-700 dark:text-neutral-300">
                     {session.user?.name}
                   </span>
-                  <span className="text-gray-500 dark:text-gray-500">
+                  <span className="text-neutral-500 dark:text-neutral-500">
                     {session.user?.email}
                   </span>
                 </div>
@@ -297,7 +307,7 @@ export default function Home() {
 
                 <button
                   onClick={() => signOut()}
-                  className="flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-400/10 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg border border-gray-400/20"
+                  className="flex items-center gap-2 px-6 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-400/10 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-xl border border-neutral-400/20"
                 >
                   Logout<LogOut className="w-4 h-4" />
                 </button>
@@ -310,7 +320,7 @@ export default function Home() {
                     localStorage.setItem('urlShortenerFormData', JSON.stringify({ url, customPath, expiry }))
                     signIn('google')
                   }}
-                  className="flex items-center gap-2 px-6 py-3 bg-gray-400/10 dark:bg-gray-400/10 border border-gray-400/20 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="flex items-center gap-2 px-6 py-3 bg-neutral-400/10 dark:bg-neutral-400/10 border border-neutral-400/20 rounded-xl text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -337,11 +347,11 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-black border border-gray-400/20 rounded-xl p-6 sm:p-8">
+        <div className="z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-neutral-400/20 rounded-xl p-6 sm:p-8 backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6">
               <div>
-                <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                <label htmlFor="url" className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
                   Long URL
                 </label>
                 <input
@@ -351,20 +361,20 @@ export default function Home() {
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com/your-long-url"
                   required
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-600 rounded-xl 
                     focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
-                    bg-transparent text-gray-900 dark:text-white
-                    placeholder-gray-400 dark:placeholder-gray-500"
+                    bg-transparent text-neutral-900 dark:text-white
+                    placeholder-neutral-400 dark:placeholder-neutral-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="customPath" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                <label htmlFor="customPath" className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
                   Custom Path (Optional)
                 </label>
-                <div className="flex items-center gap-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                <div className="flex items-center p-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-transparent">
                   <span className="text-black text-base dark:text-white whitespace-nowrap">
-                    {process.env.NEXT_PUBLIC_BASE_URL}/
+                    {process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, '')}/
                   </span>
                   <input
                     id="customPath"
@@ -374,26 +384,26 @@ export default function Home() {
                     placeholder="custom-path"
                     pattern="^[a-zA-Z0-9-_]*$"
                     title="Only letters, numbers, hyphens and underscores allowed"
-                    className="flex-1 bg-transparent focus:outline-none text-gray-900 dark:text-white
-                      placeholder-gray-400 dark:placeholder-gray-500 min-w-0"
+                    className="flex-1 bg-transparent focus:outline-none text-neutral-900 dark:text-white
+                      placeholder-neutral-400 dark:placeholder-neutral-500 min-w-0"
                   />
                 </div>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Only letters, numbers, hyphens and underscores allowed
+                <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                  Only letters, numbers, hyphens and underscores allowed, paths is case sensitive
                 </p>
               </div>
 
               <div>
-                <label htmlFor="expiry" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                <label htmlFor="expiry" className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
                   Link Expiration (Optional)
                 </label>
                 <select
                   id="expiry"
                   value={expiry}
                   onChange={(e) => setExpiry(e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
+                  className="w-full p-3 border border-neutral-300 dark:border-neutral-600 rounded-xl 
                     focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
-                    bg-transparent text-gray-900 dark:text-white"
+                    bg-transparent text-neutral-900 dark:text-white"
                 >
                   <option value="">No expiration</option>
                   <option value="3600">1 hour</option>
@@ -407,9 +417,9 @@ export default function Home() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 
+              className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                text-white font-medium transition-colors border border-gray-400/20
+                text-white font-medium transition-colors border border-neutral-400/20
                 disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
               {isLoading ? (
@@ -424,13 +434,13 @@ export default function Home() {
           </form>
 
           {error && (
-            <div className="mt-6 p-4 bg-white dark:bg-black border border-red-200/50 dark:border-red-800/50 rounded-lg">
+            <div className="mt-6 p-4 z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-red-200/50 dark:border-red-800/50 rounded-xl backdrop-blur-xl">
               <p className="text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
 
           {shortUrl && (
-            <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg">
+            <div className="mt-6 p-4 bg-green-50/10 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl backdrop-blur-xl">
               <p className="text-green-700 dark:text-green-300 mb-2">Your shortened URL:</p>
               <div className="flex items-center gap-2">
                 <a
@@ -443,7 +453,7 @@ export default function Home() {
                 </a>
                 <button
                   onClick={() => handleCopy(shortUrl, 'new')}
-                  className="p-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-400/10 border border-gray-400/20 rounded-lg transition-colors"
+                  className="p-3 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 bg-neutral-400/10 border border-neutral-400/20 rounded-xl transition-colors"
                   title={copiedId === 'new' ? 'Copied!' : 'Copy to clipboard'}
                 >
                   {copiedId === 'new' ? (
@@ -459,25 +469,25 @@ export default function Home() {
 
         {session && (
           <div className="mt-12">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Your Links</h2>
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-6">Your Links</h2>
             {isLoadingLinks ? (
               <div className="flex justify-center">
-                <FiLoader className="w-6 h-6 animate-spin text-gray-500 dark:text-gray-400" />
+                <FiLoader className="w-6 h-6 animate-spin text-neutral-500 dark:text-neutral-400" />
               </div>
             ) : linksError ? (
               <div className="text-center text-red-500">{linksError}</div>
             ) : links.length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400">No links created yet</div>
+              <div className="text-center text-neutral-500 dark:text-neutral-400">No links created yet</div>
             ) : (
               <div className="space-y-4">
                 {links.map((link) => (
                   <div
                     key={link.shortId}
-                    className="bg-white dark:bg-black border border-gray-400/20 rounded-xl p-4"
+                    className=" z-10 bg-neutral-100/20 dark:bg-neutral-700/20 border border-neutral-400/20 rounded-xl p-4 backdrop-blur-xl"
                   >
                     <div className="flex flex-col gap-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Link Details</h3>
+                        <h3 className="text-lg font-medium text-neutral-900 dark:text-white">Link Details</h3>
                         <div className="flex items-center gap-2">
                           {editingId === link.shortId ? (
                             <>
@@ -490,14 +500,14 @@ export default function Home() {
                                     return next
                                   })
                                 }}
-                                className="p-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 bg-gray-400/10 rounded-lg border border-gray-400/20"
+                                className="p-3 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
                                 disabled={isUpdating[link.shortId]}
                               >
                                 <FiX className="w-5 h-5" />
                               </button>
                               <button
                                 onClick={() => handleSaveChanges(link.shortId)}
-                                className="p-3 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 bg-gray-400/10 rounded-lg border border-gray-400/20"
+                                className="p-3 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
                                 disabled={isUpdating[link.shortId]}
                               >
                                 {isUpdating[link.shortId] ? (
@@ -521,13 +531,13 @@ export default function Home() {
                                     }
                                   }))
                                 }}
-                                className="p-3 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 bg-gray-400/10 rounded-lg border border-gray-400/20"
+                                className="p-3 text-neutral-700 hover:text-neutral-200 dark:text-neutral-300 dark:hover:text-neutral-200 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
                               >
                                 <FiEdit2 className="w-5 h-5" />
                               </button>
                               <button
                                 onClick={() => handleDelete(link.shortId)}
-                                className="p-3 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-gray-400/10 rounded-lg border border-gray-400/20"
+                                className="p-3 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-neutral-400/10 rounded-xl border border-neutral-400/20"
                                 disabled={isUpdating[link.shortId]}
                               >
                                 {isUpdating[link.shortId] ? (
@@ -543,7 +553,7 @@ export default function Home() {
 
                       <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2 min-w-0">
-                          <label className="text-sm text-gray-500 dark:text-gray-400">Original URL</label>
+                          <label className="text-sm text-neutral-500 dark:text-neutral-400">Original URL</label>
                           {editingId === link.shortId ? (
                             <input
                               type="url"
@@ -552,7 +562,7 @@ export default function Home() {
                                 ...prev,
                                 [link.shortId]: { ...prev[link.shortId], originalUrl: e.target.value }
                               }))}
-                              className="w-full p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
+                              className="w-full p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
                             />
                           ) : (
                             <a
@@ -567,11 +577,11 @@ export default function Home() {
                         </div>
 
                         <div className="space-y-2 min-w-0">
-                          <label className="text-sm text-gray-500 dark:text-gray-400">Short URL</label>
+                          <label className="text-sm text-neutral-500 dark:text-neutral-400">Short URL</label>
                           <div className="flex items-center gap-2 overflow-hidden">
                             {editingId === link.shortId ? (
                               <div className="flex items-center gap-2 w-full">
-                                <span className="text-gray-500 dark:text-gray-400 shrink-0">{process.env.NEXT_PUBLIC_BASE_URL}/</span>
+                                <span className="text-neutral-500 dark:text-neutral-400 shrink-0">{process.env.NEXT_PUBLIC_BASE_URL}/</span>
                                 <input
                                   type="text"
                                   value={editedValues[link.shortId]?.shortId ?? link.shortId}
@@ -580,7 +590,7 @@ export default function Home() {
                                     [link.shortId]: { ...prev[link.shortId], shortId: e.target.value }
                                   }))}
                                   pattern="^[a-zA-Z0-9-_]*$"
-                                  className="min-w-0 flex-1 p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
+                                  className="min-w-0 flex-1 p-2 text-blue-600 dark:text-blue-400 bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
                                 />
                               </div>
                             ) : (
@@ -591,11 +601,11 @@ export default function Home() {
                                   rel="noopener noreferrer" 
                                   className="text-blue-600 dark:text-blue-400 hover:underline truncate"
                                 >
-                                  {process.env.NEXT_PUBLIC_BASE_URL}/{link.shortId}
+                                  {process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https:\/\//, '')}/{link.shortId}
                                 </a>
                                 <button
                                   onClick={() => handleCopy(`${process.env.NEXT_PUBLIC_BASE_URL}/${link.shortId}`, link.shortId)}
-                                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 bg-gray-400/10 shrink-0 border border-gray-400/20 rounded-lg transition-colors"
+                                  className="p-2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 bg-neutral-400/10 shrink-0 border border-neutral-400/20 rounded-xl transition-colors"
                                   title={copiedId === link.shortId ? 'Copied!' : 'Copy to clipboard'}
                                 >
                                   {copiedId === link.shortId ? (
@@ -610,7 +620,7 @@ export default function Home() {
                         </div>
 
                         <div className="space-y-2 md:col-span-2">
-                          <label className="text-sm text-gray-500 dark:text-gray-400">Expiration</label>
+                          <label className="text-sm text-neutral-500 dark:text-neutral-400">Expiration</label>
                           {editingId === link.shortId ? (
                             <select
                               value={editedValues[link.shortId]?.expiresAt ?? ''}
@@ -618,7 +628,7 @@ export default function Home() {
                                 ...prev,
                                 [link.shortId]: { ...prev[link.shortId], expiresAt: e.target.value }
                               }))}
-                              className="w-full p-2 text-gray-900 dark:text-white bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
+                              className="w-full p-2 text-neutral-900 dark:text-white bg-transparent border border-neutral-300 dark:border-neutral-600 rounded-xl focus:border-blue-500 focus:outline-none"
                             >
                               <option value="">No expiration</option>
                               <option value="3600">1 hour</option>
@@ -627,14 +637,14 @@ export default function Home() {
                               <option value="2592000">1 month</option>
                             </select>
                           ) : link.expiresAt ? (
-                            <p className="text-gray-900 dark:text-white">
+                            <p className="text-neutral-900 dark:text-white">
                               Expires {formatRelativeTime(link.expiresAt)}
-                              <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                              <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-2">
                                 ({formatDate(link.expiresAt)})
                               </span>
                             </p>
                           ) : (
-                            <p className="text-gray-500 dark:text-gray-400">No expiration</p>
+                            <p className="text-neutral-500 dark:text-neutral-400">No expiration</p>
                           )}
                         </div>
                       </div>

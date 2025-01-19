@@ -24,5 +24,114 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Update gradient blob animation */
+.gradient-blob {
+  position: fixed;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: linear-gradient(
+    128deg,
+    rgba(255, 0, 128, 0.15) 0%,
+    rgba(255, 102, 0, 0.15) 33%,
+    rgba(147, 51, 234, 0.15) 66%,
+    rgba(79, 70, 229, 0.15) 100%
+  );
+  filter: blur(70px);
+  animation: blob-bounce 20s infinite ease;
+  z-index: 0;
+  mix-blend-mode: multiply;
+}
+
+.gradient-blob:nth-child(2) {
+  background: linear-gradient(
+    128deg,
+    rgba(0, 204, 255, 0.15) 0%,
+    rgba(0, 255, 128, 0.15) 33%,
+    rgba(255, 0, 255, 0.15) 66%,
+    rgba(255, 102, 0, 0.15) 100%
+  );
+  animation-delay: -10s;
+  animation-duration: 15s;
+}
+
+@keyframes blob-bounce {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(30%, 30%) scale(1.2) rotate(120deg);
+  }
+  66% {
+    transform: translate(-20%, 20%) scale(0.8) rotate(240deg);
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(360deg);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .gradient-blob {
+    mix-blend-mode: screen;
+    background: linear-gradient(
+      128deg,
+      rgba(255, 0, 128, 0.15) 0%,
+      rgba(255, 51, 0, 0.15) 33%, 
+      rgba(147, 51, 234, 0.15) 66%,
+      rgba(79, 70, 229, 0.15) 100%
+    );
+  }
+
+  .gradient-blob:nth-child(2) {
+    background: linear-gradient(
+      128deg,
+      rgba(0, 204, 255, 0.15) 0%,
+      rgba(0, 255, 128, 0.15) 33%,
+      rgba(255, 0, 255, 0.15) 66%,
+      rgba(255, 51, 0, 0.15) 100% 
+    );
+  }
+}
+
+/* Grain effect */
+.grain {
+  position: fixed;
+  top: -150%;
+  left: -50%;
+  right: -50%;
+  bottom: -150%;
+  width: 400%;
+  height: 400vh;
+  background: transparent;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: overlay;
+}
+
+.grain::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: grain 8s steps(10) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform:translate(0, 0) }
+  10% { transform:translate(-5%, -10%) }
+  20% { transform:translate(-15%, 5%) }
+  30% { transform:translate(7%, -25%) }
+  40% { transform:translate(-5%, 25%) }
+  50% { transform:translate(-15%, 10%) }
+  60% { transform:translate(15%, 0%) }
+  70% { transform:translate(0%, 15%) }
+  80% { transform:translate(3%, 35%) }
+  90% { transform:translate(-10%, 10%) }
 }
