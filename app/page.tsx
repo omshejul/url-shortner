@@ -246,12 +246,9 @@ export default function Home() {
       {/* Add gradient blobs */}
       <div className="gradient-blob top-[-20%] left-[-10%] opacity-50" />
       <div 
-        className="gradient-blob bottom-[-20%] right-[-10%] opacity-50" 
+        className="gradient-blob bottom-[-20%] right-[-10%] opacity-60" 
         style={{ animationDelay: '-10s' }}
       />
-      
-      {/* Add grain effect */}
-      <div className="grain" />
       
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         {configError && (
