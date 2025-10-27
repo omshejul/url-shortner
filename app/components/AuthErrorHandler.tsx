@@ -19,10 +19,13 @@ export default function AuthErrorHandler({ children }: AuthErrorHandlerProps) {
       }
     };
 
-    window.addEventListener("auth-error" as any, handleAuthError);
+    window.addEventListener("auth-error", handleAuthError as EventListener);
 
     return () => {
-      window.removeEventListener("auth-error" as any, handleAuthError);
+      window.removeEventListener(
+        "auth-error",
+        handleAuthError as EventListener
+      );
     };
   }, []);
 

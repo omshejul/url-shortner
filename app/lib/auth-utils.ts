@@ -33,8 +33,8 @@ export function clearNextAuthCookies() {
  * Generate a secure random secret for NEXTAUTH_SECRET
  * This is useful for development or when setting up the app
  */
-export function generateNextAuthSecret(): string {
-    const crypto = require('crypto');
+export async function generateNextAuthSecret(): Promise<string> {
+    const crypto = await import('crypto');
     return crypto.randomBytes(32).toString('hex');
 }
 

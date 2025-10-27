@@ -13,7 +13,7 @@ function getDatabaseNameFromURI(uri: string): string {
       throw new Error('No database name found in MONGODB_URI')
     }
     return dbName
-  } catch (error) {
+  } catch {
     throw new Error('Invalid MONGODB_URI format')
   }
 }
