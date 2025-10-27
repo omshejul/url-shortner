@@ -4,6 +4,22 @@ if (!process.env.MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"')
 }
 
+// Extract database name from MongoDB URI
+function getDatabaseNameFromURI(uri: string): string {
+  try {
+    const url = new URL(uri)
+    const dbName = url.pathname.slice(1).split('?')[0] // Remove leading '/' and query params
+    if (!dbName) {
+      throw new Error('No database name found in MONGODB_URI')
+    }
+    return dbName
+  } catch (error) {
+    throw new Error('Invalid MONGODB_URI format')
+  }
+}
+
+export const DATABASE_NAME = getDatabaseNameFromURI(process.env.MONGODB_URI)
+
 const uri = process.env.MONGODB_URI
 const options = {}
 
@@ -28,20 +44,26 @@ if (process.env.NODE_ENV === 'development') {
   clientPromise = client.connect()
 }
 
-export default clientPromise 
+export default clientPromise
 
 // Add this function to clean expired links
 export async function cleanExpiredLinks() {
   try {
     const client = await clientPromise
-    const db = client.db('url-shortner')
-    
+    const db = client.db(DATABASE_NAME)
+
     const result = await db.collection('links').deleteMany({
       expiresAt: { $lt: new Date() }
     })
-    
+
     console.log(`Cleaned ${result.deletedCount} expired links`)
   } catch (error) {
     console.error('Error cleaning expired links:', error)
   }
-} 
+}
+
+// Helper function to get database instance
+export async function getDatabase() {
+  const client = await clientPromise
+  return client.db(DATABASE_NAME)
+}

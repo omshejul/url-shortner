@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
-import { Providers } from './providers';
+import { Providers } from "./providers";
+import AuthErrorHandler from "./components/AuthErrorHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${figtree.variable} ${geistMono.variable} font-[family-name:var(--font-figtree)] antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <AuthErrorHandler>{children}</AuthErrorHandler>
+        </Providers>
       </body>
     </html>
   );

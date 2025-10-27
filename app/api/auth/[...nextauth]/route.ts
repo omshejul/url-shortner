@@ -1,4 +1,4 @@
-import clientPromise from '@/app/lib/mongodb'
+import clientPromise, { DATABASE_NAME } from '@/app/lib/mongodb'
 import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
@@ -11,11 +11,17 @@ const handler = NextAuth({
     }),
   ],
   adapter: MongoDBAdapter(clientPromise, {
-    databaseName: 'url-shortner'
+    databaseName: DATABASE_NAME
   }),
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -30,6 +36,7 @@ const handler = NextAuth({
       return session;
     },
   },
+  debug: process.env.NODE_ENV === 'development',
 })
 
 export { handler as GET, handler as POST }
