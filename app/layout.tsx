@@ -19,7 +19,7 @@ const figtree = Figtree({
 });
 
 export const metadata: Metadata = {
-  title: "Arthkin - URL Shortener",
+  title: "URL Shortener",
   description: "A simple, fast, and secure URL shortener",
 };
 
