@@ -22,6 +22,42 @@ const handler = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
+  // Use unique cookie names to avoid conflicts with main site
+  cookies: {
+    sessionToken: {
+      name: `url-shortener.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/link',
+        secure: process.env.NODE_ENV === 'production'
+      }
+    },
+    callbackUrl: {
+      name: `url-shortener.callback-url`,
+      options: {
+        sameSite: 'lax',
+        path: '/link',
+        secure: process.env.NODE_ENV === 'production'
+      }
+    },
+    csrfToken: {
+      name: `url-shortener.csrf-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/link',
+        secure: process.env.NODE_ENV === 'production'
+      }
+    }
+  },
+  // Use unique pages to avoid conflicts
+  pages: {
+    signIn: '/link/api/auth/signin',
+    signOut: '/link/api/auth/signout',
+    error: '/link/api/auth/error',
+    verifyRequest: '/link/api/auth/verify-request',
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
