@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: '/link',
+  assetPrefix: '/link',
   images: {
     remotePatterns: [
       {
@@ -10,4 +12,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig

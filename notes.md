@@ -1,6 +1,6 @@
 cd /home/om/server/url-shortner
 
-pm2 start --name "url-shortner" pnpm -- run start --port 3008
+pm2 start --name "url-shortner" pnpm -- run start --port 3008 && pm2 logs url-shortner
 
 pnpm run build
 
